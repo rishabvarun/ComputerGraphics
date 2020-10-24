@@ -1,68 +1,85 @@
 #include <GL/glut.h>
-
-typedef GLfloat point[3];
-point v[]={{30.0, 50.0, 100.0}, {0.0, 450.0, -150.0},
- {-350.0, -400.0, -150.0}, {350., -400., -150.0}};
-int n;
-void triangle( point a, point b, point c)
-
+#include<Windows.h>
+float x1,x2,x3,x4,y1,y2,y3,y4;
+void edgedetect(float x1,float y1,float x2,float y2,int *le,int *re)
 {
- glBegin(GL_TRIANGLES);
- glVertex3fv(a);
- glVertex3fv(b);
- glVertex3fv(c);
-glEnd();
-}
-void divide_triangle(point a, point b, point c, int m)
+float mx,x,temp;
+int i;
+if((y2-y1)<0)
 {
-
- point v0, v1, v2;
- int j;
- if(m>0)
- {
- for(j=0; j<3; j++) v0[j]=(a[j]+b[j])/2;
- for(j=0; j<3; j++) v1[j]=(a[j]+c[j])/2;
- for(j=0; j<3; j++) v2[j]=(b[j]+c[j])/2;
- divide_triangle(a, v0, v1, m-1);
- divide_triangle(c, v1, v2, m-1);
- divide_triangle(b, v2, v0, m-1);
- }
- else(triangle(a,b,c));
-/* draw triangle at end of recursion */
+temp=y1;y1=y2;y2=temp;
+temp=x1;x1=x2;x2=temp;
 }
-void tetra(int m)
+if((y2-y1)!=0)
+mx=(x2-x1)/(y2-y1);
+else mx=x2-x1;
+x=x1;
+for(i=y1;i<=y2;i++)
+{
+if(x<(float)le[i])
+le[i]=(int)x;
+if(x>(float)re[i])
+re[i]=(int)x;
+x+=mx;
+}
+}
+void draw_pixel(int x,int y)
 {
 glColor3f(1.0,0.0,0.0);
-divide_triangle(v[0],v[1],v[2],m);
-glColor3f(0.0,1.0,0.0);
-divide_triangle(v[3],v[2],v[1],m);
-glColor3f(0.0,0.0,1.0);
-divide_triangle(v[0],v[3],v[1],m);
-glColor3f(0.0,0.0,0.0);
-divide_triangle(v[0],v[2],v[3],m);
+Sleep(10); // To set the delay time
+glBegin(GL_POINTS);
+glVertex2i(x,y);
+glEnd();
+glFlush();
+}
+void scanfill(float x1,float y1,float x2,float y2,float x3,float y3,float x4,float y4)
+{
+int le[500],re[500],i,y;
+for(i=0;i<500;i++)
+{
+le[i]=500;
+re[i]=0;
+}
+edgedetect(x1,y1,x2,y2,le,re);
+edgedetect(x2,y2,x3,y3,le,re);
+edgedetect(x3,y3,x4,y4,le,re);
+edgedetect(x4,y4,x1,y1,le,re);
+for(y=0;y<500;y++)
+{
+if(le[y]<=re[y])
+for(i=(int)le[y];i<(int)re[y];i++)
+draw_pixel(i,y);
+}
 }
 void display()
 {
-glClearColor (1.0, 1.0, 1.0,1.0);
- glClear(GL_COLOR_BUFFER_BIT);
- tetra(n);
- glFlush();
+x1=200.0;y1=200.0;x2=100.0;y2=300.0;x3=200.0;y3=400.0;x4=300.0;y4=300.0;
+glClear(GL_COLOR_BUFFER_BIT);
+glColor3f(0.0, 0.0, 1.0);
+glBegin(GL_LINE_LOOP);
+ glVertex2f(x1,y1);
+ glVertex2f(x2,y2);
+ glVertex2f(x3,y3);
+ glVertex2f(x4,y4);
+glEnd();
+scanfill(x1,y1,x2,y2,x3,y3,x4,y4);
+glFlush();
 }
 void myinit()
 {
- glMatrixMode(GL_PROJECTION);
- glLoadIdentity();
- glOrtho(-499.0, 499.0, -499.0, 499.0,-499.0,499.0);
- glMatrixMode(GL_MODELVIEW);
- }
-int main(int argc, char **argv)
+glClearColor(1.0,1.0,1.0,1.0);
+glColor3f(1.0,0.0,0.0);
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+gluOrtho2D(0.0,499.0,0.0,499.0);
+}
+void main(int argc, char** argv)
 {
- n=5;
- glutInit(&argc, argv);
- glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
- glutInitWindowSize(500, 500);
- glutCreateWindow("3D Gasket");
- glutDisplayFunc(display);
+glutInit(&argc,argv);
+glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
+glutInitWindowSize(500,500);
+glutCreateWindow("Filling a Polygon using Scan-line Algorithm");
+glutDisplayFunc(display);
 myinit();
- glutMainLoop();
+glutMainLoop();
 }
