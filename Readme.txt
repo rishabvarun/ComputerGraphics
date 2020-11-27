@@ -4,5 +4,7 @@ Inputs for programs:
 2) Circle: x,y = 100,100 radius=60
 3) No input
 4) No input
+5)
+6) No input
 
 Submitted by Rishab V Arun 1RV17CS122
