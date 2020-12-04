@@ -10,7 +10,7 @@ Inputs for programs:
    Viewport co-ordinates:(200,200) (400,400)
    Line 1 co-ordinates:(-10,10) (200,100)
    Line 2 co-ordinates:(50,250) (350,270)
-8)
+8) Polygon cordinates and clipping window coordinates
    
 
 Submitted by Rishab V Arun 1RV17CS122
