@@ -4,7 +4,7 @@ Inputs for programs:
 2) Circle: x,y = 100,100 radius=60
 3) No input
 4) No input
-5)
+5) angle = 270 m, c = -1, 0
 6) No input
 7) Window co-ordinates:(0,0) (150,150)
    Viewport co-ordinates:(200,200) (400,400)
